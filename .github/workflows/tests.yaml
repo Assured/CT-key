@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  workflow_run:
+    workflows:
+      - lint
+    types:
+      - completed
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        linter: [flake8, pylint, ruff, mypy, pyright, fixit, pyre]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: advanced-security/python-lint-code-scanning-action@v1
+        with:
+          linter: ${{ matrix.linter }}
+          python-version: 3.12

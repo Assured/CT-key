@@ -3,14 +3,14 @@
 from litex_boards.targets.radiona_ulx3s import BaseSoC
 from litex_boards.platforms import radiona_ulx3s
 from litex.soc.integration.builder import *
-from cores import timer
+from cores import aes
 
 class SoCUlx3s(BaseSoC):
     def __init__(self, **kwargs):
         BaseSoC.__init__(self, **kwargs)
 
         # Timer ------------------------------------------------------------------------------------
-        self.timer = timer.timer(self.platform)
+        self.aes = aes.aes(self.platform)
     
     # RGB Led ----------------------------------------------------------------------------------
     

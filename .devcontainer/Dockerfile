@@ -7,7 +7,6 @@ WORKDIR /tools
 RUN apk add --no-cache python3 py3-pip verilator git py3-virtualenv make json-c-dev libevent-dev bash
 
 # Install yosys
-COPY oss-cad-suite-linux-x64-20250108.tgz /tools/oss-cad-suite-linux-x64-20250108.tgz
 RUN wget https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2025-01-08/oss-cad-suite-linux-x64-20250108.tgz && \
     tar -xvf oss-cad-suite-linux-x64-20250108.tgz && \
     rm oss-cad-suite-linux-x64-20250108.tgz

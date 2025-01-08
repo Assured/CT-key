@@ -172,3 +172,4 @@ cython_debug/
 
 build/
 *.log
+cores/aes
