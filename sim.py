@@ -211,9 +211,9 @@ def main():
         soc.add_constant("ROM_BOOT_ADDRESS", ram_boot_address)
     if args.with_ethernet:
         for i in range(4):
-            soc.add_constant("LOCALIP{}".format(i+1), int(args.local_ip.split(".")[i]))
+            soc.add_constant(f"LOCALIP{i+1}", int(args.local_ip.split(".")[i]))
         for i in range(4):
-            soc.add_constant("REMOTEIP{}".format(i+1), int(args.remote_ip.split(".")[i]))
+            soc.add_constant(f"REMOTEIP{i+1}", int(args.remote_ip.split(".")[i]))
 
     # Build/Run ------------------------------------------------------------------------------------
     def pre_run_callback(vns):

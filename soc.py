@@ -56,7 +56,7 @@ class SoCUlx3s(BaseSoC):
 
     def generate_dts(self, board_name):
         json_src = os.path.join("build", board_name, "csr.json")
-        dts = os.path.join("build", board_name, "{}.dts".format(board_name))
+        dts = os.path.join("build", board_name, f"{board_name}.dts")
 
         with open(json_src) as json_file, open(dts, "w") as dts_file:
             dts_content = generate_dts(json.load(json_file), polling=False)
@@ -65,28 +65,29 @@ class SoCUlx3s(BaseSoC):
     # DTS compilation --------------------------------------------------------------------------
 
     def compile_dts(self, board_name, symbols=False):
-        dts = os.path.join("build", board_name, "{}.dts".format(board_name))
-        dtb = os.path.join("build", board_name, "{}.dtb".format(board_name))
+        dts = os.path.join("build", board_name, f"{board_name}.dts")
+        dtb = os.path.join("build", board_name, f"{board_name}.dtb")
+        sym = "-@" if symbols else ""
         subprocess.check_call(
-            "dtc {} -O dtb -o {} {}".format("-@" if symbols else "", dtb, dts), shell=True)
+            f"dtc {sym} -O dtb -o {dtb} {dts}", dtb, dts), shell=True)
 
     # DTB combination --------------------------------------------------------------------------
 
     def combine_dtb(self, board_name, overlays=""):
-        dtb_in = os.path.join("build", board_name, "{}.dtb".format(board_name))
+        dtb_in = os.path.join("build", board_name, f"{board_name}.dtb")
         dtb_out = os.path.join("images", "rv32.dtb")
         if overlays == "":
             shutil.copyfile(dtb_in, dtb_out)
         else:
             subprocess.check_call(
-                "fdtoverlay -i {} -o {} {}".format(dtb_in, dtb_out, overlays), shell=True)
+                f"fdtoverlay -i {dtb_in} -o {dtb_out} {overlays}", shell=True)
 
     # Documentation generation -----------------------------------------------------------------
     def generate_doc(self, board_name):
         from litex.soc.doc import generate_docs
         doc_dir = os.path.join("build", board_name, "doc")
         generate_docs(self, doc_dir)
-        os.system("sphinx-build -M html {}/ {}/_build".format(doc_dir, doc_dir))
+        os.system(f"sphinx-build -M html {doc_dir}/ {doc_dir}/_build")
         
 def main():
     from litex.build.parser import LiteXArgumentParser
