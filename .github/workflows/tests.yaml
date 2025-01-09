@@ -6,6 +6,12 @@ on:
       - lint
     types:
       - completed
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   lint:
