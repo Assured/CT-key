@@ -23,10 +23,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: 'recursive'
-      - run: ls -laR ${{ github.workspace }}
-      - name: Build development environment
-        run: docker buildx build -t local ${{ github.workspace }}/.devcontainer
-      - name: Build SoC
-        run: docker run -v ${{ github.workspace }}:/srv -w /srv -u root local --build
+          submodules: recursive
+      - run: ls -laR ${{ github.workspace }}/cores
+      #- name: Build development environment
+      #  run: docker buildx build -t local ${{ github.workspace }}/.devcontainer
+      #- name: Build SoC
+      #  run: docker run -v ${{ github.workspace }}:/srv -w /srv -u root local --build
 
