@@ -69,7 +69,7 @@ class SoCUlx3s(BaseSoC):
         dtb = os.path.join("build", board_name, f"{board_name}.dtb")
         sym = "-@" if symbols else ""
         subprocess.check_call(
-            f"dtc {sym} -O dtb -o {dtb} {dts}", dtb, dts), shell=True)
+            f"dtc {sym} -O dtb -o {dtb} {dts}", shell=True)
 
     # DTB combination --------------------------------------------------------------------------
 
