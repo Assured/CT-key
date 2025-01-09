@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
           submodules: 'recursive'
       - name: Build development environment
-        run: docker buildx build -t local $PWD/.devcontainer
+        run: docker buildx build -t local ${{ github.workspace }}/.devcontainer
       - name: Build SoC
-        run: docker run -v $PWD:/srv -w /srv -u 1000 local --build
+        run: docker run -v ${{ github.workspace }}:/srv -w /srv -u root local --build
 
