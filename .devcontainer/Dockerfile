@@ -33,5 +33,7 @@ USER litex
 WORKDIR /home/litex
 
 # Set the entrypoint
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["python3", "soc.py"]
+CMD ["--no-compile"]
 
+# EOF
