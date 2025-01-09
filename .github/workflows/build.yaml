@@ -27,5 +27,5 @@ jobs:
       - name: Build development environment
         run: docker buildx build -t local $PWD/.devcontainer
       - name: Build SoC
-        run: docker run -v $PWD:/srv -w /srv -u 1000 local python3 ./soc.py --build
+        run: docker run -v $PWD:/srv -w /srv -u 1000 local --build
 
