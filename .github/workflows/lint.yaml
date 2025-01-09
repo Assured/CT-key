@@ -11,6 +11,5 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-                  
       - name: Commitlint
         uses: remarkablemark/commitlint@v1.0.0

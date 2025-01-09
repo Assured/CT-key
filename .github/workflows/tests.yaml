@@ -24,6 +24,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+      - name: Download Litex
+        run: wget https://raw.githubusercontent.com/enjoy-digital/litex/master/litex_setup.py
+      - name: Install Litex
+        run: python3 litex_setup.py --init --install --config=standard --user
       - uses: advanced-security/python-lint-code-scanning-action@v1
         with:
           linter: ${{ matrix.linter }}
