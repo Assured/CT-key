@@ -24,6 +24,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'recursive'
+      - run: ls -laR ${{ github.workspace }}
       - name: Build development environment
         run: docker buildx build -t local ${{ github.workspace }}/.devcontainer
       - name: Build SoC
