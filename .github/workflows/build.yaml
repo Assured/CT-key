@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
           submodules: 'recursive'
       - name: Build development environment
-        run: docker buildx build .devcontainer/Dockerfile
+        run: docker buildx build $PWD/.devcontainer/Dockerfile
       - name: Build SoC
         run: docker run -it -v $PWD:/srv -w /srv -u 1000 local python3 ./soc.py --build
 
