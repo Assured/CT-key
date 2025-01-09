@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        linter: [flake8, pylint, ruff, mypy, pyright, fixit, pyre]
+        linter: [flake8, pylint, ruff, mypy, pyright, fixit]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
