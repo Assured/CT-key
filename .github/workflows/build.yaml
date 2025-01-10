@@ -26,6 +26,22 @@ jobs:
           submodules: 'recursive'
       - name: Build development environment
         run: docker buildx build -t local ${{ github.workspace }}/.devcontainer
-      - name: Build SoC
-        run: docker run -v ${{ github.workspace }}:/srv -w /srv -u root local --build
+      - name: Build software
+        run: docker run -v ${{ github.workspace }}:/srv -w /srv -u root local --build --output-dir /srv/build --software-dir build/software --cpu-type vexriscv --device LFE5U-85F --toolchain trellis --no-compile-gateware
+      - name: Build gateware
+        run: docker run -v ${{ github.workspace }}:/srv -w /srv -u root local --build --output-dir /srv/build --gateware-dir build/gateware --cpu-type vexriscv --device LFE5U-85F --toolchain trellis --no-compile-software
+      - name: Generate documentation
+        run: docker run -v ${{ github.workspace }}:/srv -w /srv -u root local --build --output-dir /srv/build --cpu-type vexriscv --device LFE5U-85F --no-compile --doc
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: soc-build
+          path: |
+            ${{ github.workspace }}/build/gateware
+            ${{ github.workspace }}/build/software
+            ${{ github.workspace }}/build/doc
+            ${{ github.workspace }}/build/csr.csv
+            ${{ github.workspace }}/build/csr.json
+          if-no-files-found: error
+
 
