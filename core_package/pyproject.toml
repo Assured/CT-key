@@ -1,0 +1,19 @@
+[project]
+name = "cores"
+version = "0.0.1"
+authors = [
+  { name="Isaac Caceres", email="isaac.caceres@assured.se" },
+  { name="Joachim Strömberg", email="joachim.stromberg@assured.se"}
+]
+description = "A package containing Migen imports of Verilog written cores."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD-2 License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/Assured/CT-key"
+Issues = "https://github.com/Assured/CT-key"

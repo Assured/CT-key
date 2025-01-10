@@ -1,0 +1,3 @@
+prune src/cores/aes/src/model
+graft src/cores/aes/src/rtl
+graft src/cores/timer

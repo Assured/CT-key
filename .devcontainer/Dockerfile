@@ -33,7 +33,7 @@ USER root
 WORKDIR /home/litex
 
 # Set the entrypoint
-ENTRYPOINT ["python3", "soc.py"]
+ENTRYPOINT ["make.py", ""]
 CMD ["--no-compile"]
 
 # EOF
