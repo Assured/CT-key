@@ -1,3 +1,9 @@
 [submodule "aes"]
 	path = cores/aes
 	url = https://github.com/secworks/aes.git
+[submodule "linux-on-litex-vexriscv"]
+	path = linux-on-litex-vexriscv
+	url = https://github.com/Assured/linux-on-litex-vexriscv.git
+[submodule "buildroot"]
+	path = buildroot
+	url = http://github.com/buildroot/buildroot

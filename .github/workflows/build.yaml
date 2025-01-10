@@ -9,10 +9,10 @@ on:
       - completed
   push:
     branches:
-      - main
+      - new-build-strategy
   pull_request:
     branches:
-      - main
+      - new-build-strategy
 
 jobs:
   build:
