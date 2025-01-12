@@ -1,0 +1,2 @@
+buildroot/packages/gcc/gcc-initial/gcc-initial.hash symlink=file
+buildroot/packages/gcc/gcc-final/gcc-final.hash symlink=file
