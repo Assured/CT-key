@@ -35,7 +35,7 @@ jobs:
             python3-setuptools python3-requests python3-pexpect \
             python3-colorama python3-serial python3-packaging python3-yaml \
             ninja-build curl apt-transport-https gnupg openjdk-8-jdk -y \
-            libxcb1 libcairo2
+            libxcb-render0-dev libcairo2
           sudo update-alternatives --config java
           sudo update-alternatives --config javac
           echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
