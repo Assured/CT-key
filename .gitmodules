@@ -1,5 +1,5 @@
 [submodule "aes"]
-	path = cores/aes
+	path = core_package/src/cores/aes
 	url = https://github.com/secworks/aes.git
 [submodule "linux-on-litex-vexriscv"]
 	path = linux-on-litex-vexriscv
