@@ -4,6 +4,3 @@
 [submodule "linux-on-litex-vexriscv"]
 	path = linux-on-litex-vexriscv
 	url = https://github.com/Assured/linux-on-litex-vexriscv.git
-[submodule "buildroot"]
-	path = buildroot
-	url = http://github.com/buildroot/buildroot
