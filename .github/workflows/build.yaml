@@ -82,6 +82,18 @@ jobs:
           python3 make.py --board orange_crab_ctkey --device 85F --doc --build
 
       # Build linux
+      - name: Checkout Buildroot 2024.02.10
+        uses: actions/checkout@v4
+        with:
+          repository: https://gitlab.com/buildroot.org/buildroot.git
+          ref: 2024.02.x
+          path: ${{ github.workspace }}/buildroot
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y which sed make binutils build-essential gcc g++ diffutils bash patch gzip bzip2 perl tar cpio python unzip rsync file bc wget git rsync bc python3 findutils
+
       - name: Build linux
         run: |
           cd ${{ github.workspace }}/buildroot
@@ -94,11 +106,9 @@ jobs:
         with:
           name: soc-build
           path: |
-            ${{ github.workspace }}/build/gateware
-            ${{ github.workspace }}/build/software
-            ${{ github.workspace }}/build/doc
-            ${{ github.workspace }}/build/csr.csv
-            ${{ github.workspace }}/build/csr.json
+            ${{ github.workspace }}/linux-on-litex-vexriscv/images
+            ${{ github.workspace }}/soc_package/dist/*.whl
+            ${{ github.workspace }}/core_package/dist/*.whl
           if-no-files-found: error
 
 
