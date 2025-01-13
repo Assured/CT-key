@@ -117,6 +117,7 @@ jobs:
           name: soc-build
           path: |
             ${{ github.workspace }}/linux-on-litex-vexriscv/images
+            ${{ github.workspace }}/linux-on-litex-vexriscv/build
             ${{ github.workspace }}/soc_package/dist/*.whl
             ${{ github.workspace }}/core_package/dist/*.whl
           if-no-files-found: error
