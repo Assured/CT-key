@@ -69,7 +69,6 @@ jobs:
           tar -xf $PWD/riscv64-*.tar.gz
           sudo mkdir /usr/local/riscv
           sudo cp -r $PWD/riscv64-*/* /usr/local/riscv
-          export PATH=/usr/local/riscv/bin:$HOME/.local/bin:$PATH
 
       # Build Cores Package
       - name: Build cores package
@@ -89,6 +88,7 @@ jobs:
       - name: Build SoC
         run: |
           cd ${{ github.workspace }}/linux-on-litex-vexriscv
+          export PATH=/usr/local/riscv/bin:$HOME/.local/bin:$PATH
           python3 make.py --board orange_crab_ctkey --device 85F --doc --build
 
       # Build linux
