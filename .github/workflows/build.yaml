@@ -65,7 +65,11 @@ jobs:
       # Install RISC-V GCC
       - name: Install RISC-V GCC
         run: |
-          python3 litex_setup.py --gcc=riscv
+          wget https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+          tar -xf $PWD/riscv64-*.tar.gz
+          sudo mkdir /usr/local/riscv
+          sudo cp -r $PWD/riscv64-*/* /usr/local/riscv
+          export PATH=/usr/local/riscv/bin:$HOME/.local/bin:$PATH
 
       # Build Cores Package
       - name: Build cores package
