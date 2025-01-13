@@ -26,7 +26,7 @@ from litex.soc.cores.gpio import GPIOOut
 
 from litedram import modules as litedram_modules
 from litedram.phy import GENSDRPHY, HalfRateGENSDRPHY
-from cores import aes
+from ctkey.cores import aes
 
 # CRG ----------------------------------------------------------------------------------------------
 

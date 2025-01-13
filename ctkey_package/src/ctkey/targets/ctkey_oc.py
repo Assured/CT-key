@@ -24,7 +24,7 @@ from litex.soc.cores.led import LedChaser
 
 from litedram.modules import MT41K64M16, MT41K128M16, MT41K256M16, MT41K512M16
 from litedram.phy import ECP5DDRPHY
-from cores import aes
+from ctkey.cores import aes
 
 # CRG ---------------------------------------------------------------------------------------------
 
