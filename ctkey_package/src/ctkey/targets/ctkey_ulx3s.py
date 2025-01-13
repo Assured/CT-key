@@ -96,7 +96,7 @@ class BaseSoC(SoCCore):
         with_spi_flash         = False,
         **kwargs):
         platform = radiona_ulx3s.Platform(device=device, revision=revision, toolchain=toolchain)
-        aes = aes.aes(platform)
+        self.aes = aes.aes(platform)
 
         # CRG --------------------------------------------------------------------------------------
         with_usb_pll   = kwargs.get("uart_name", None) == "usb_acm"

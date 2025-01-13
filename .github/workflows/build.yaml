@@ -70,17 +70,10 @@ jobs:
           sudo mkdir /usr/local/riscv
           sudo cp -r $PWD/riscv64-*/* /usr/local/riscv
 
-      # Build Cores Package
-      - name: Build cores package
+      # Build CT-Key Package
+      - name: Build ctkey package
         run: |
-          cd ${{ github.workspace }}/core_package 
-          python3 -m build
-          pip install dist/*.whl
-
-      # Build SoC Package
-      - name: Build soc package
-        run: |
-          cd ${{ github.workspace }}/soc_package
+          cd ${{ github.workspace }}/ctkey_package 
           python3 -m build
           pip install dist/*.whl
 

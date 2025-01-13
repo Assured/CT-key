@@ -1,11 +1,11 @@
 [project]
-name = "cores"
-version = "0.0.1"
+name = "ctkey"
+version = "1.0.0"
 authors = [
   { name="Isaac Caceres", email="isaac.caceres@assured.se" },
   { name="Joachim Strömberg", email="joachim.stromberg@assured.se"}
 ]
-description = "A package containing Migen imports of Verilog written cores."
+description = "A package containing Migen imports of Verilog written cores and targets for Litex framework."
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
