@@ -102,7 +102,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y which sed make binutils build-essential gcc g++ diffutils bash patch gzip bzip2 perl tar cpio python unzip rsync file bc wget git rsync bc python3 findutils
+          sudo apt install -y which sed make binutils build-essential gcc g++ diffutils bash patch gzip bzip2 perl tar cpio unzip rsync file bc wget git rsync bc findutils
 
       - name: Build linux
         run: |
