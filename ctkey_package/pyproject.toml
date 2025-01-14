@@ -3,7 +3,7 @@ name = "ctkey"
 version = "1.0.0"
 authors = [
   { name="Isaac Caceres", email="isaac.caceres@assured.se" },
-  { name="Joachim Strömberg", email="joachim.stromberg@assured.se"}
+  { name="Joachim Strömbergson", email="joachim.strombergson@assured.se"}
 ]
 description = "A package containing Migen imports of Verilog written cores and targets for Litex framework."
 readme = "README.md"
