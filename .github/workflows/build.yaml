@@ -112,7 +112,7 @@ jobs:
 
       - name: Install ctkey package
         run: |
-          pip install ${{ github.workspace }}/ctkey_package/dist/*.whl
+          pip install ctkey-1.0.0-py3-none-any.whl
 
       # Install Yosys
       - name: Install Yosys
