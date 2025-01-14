@@ -2,21 +2,54 @@ name: build
 
 on:
   workflow_run:
-    workflows:
-      - lint
-      - tests
+    workflows: [commitlint]
     types:
       - completed
   push:
     branches:
-      - new-build-strategy
+      - main
   pull_request:
     branches:
-      - new-build-strategy
+      - main
 
 jobs:
+  build-ctkey-python:
+    runs-on: ubuntu-22.04
+    steps:
+      # Checkout Repository
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+
+      # Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      # Install Python Dependencies
+      - name: Install Python Dependencies
+        run: |
+          pip3 install --upgrade build
+
+      # Build CT-Key Package
+      - name: Build ctkey package
+        run: |
+          cd ${{ github.workspace }}/ctkey_package 
+          python3 -m build
+
+      # Store artifacts
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctkey-package
+          path: ${{ github.workspace }}/ctkey_package/dist/*.whl
+  
   build:
     runs-on: ubuntu-22.04
+    needs: build-ctkey-python
     steps:
       # Checkout Repository
       - name: Checkout
@@ -34,7 +67,9 @@ jobs:
             verilator libevent-dev libjson-c-dev device-tree-compiler \
             python3-setuptools python3-requests python3-pexpect \
             python3-colorama python3-serial python3-packaging python3-yaml \
-            ninja-build curl apt-transport-https gnupg openjdk-8-jdk -y
+            ninja-build curl apt-transport-https gnupg openjdk-8-jdk sed make \
+            binutils gcc g++ diffutils bash patch gzip bzip2 perl tar cpio unzip \
+            rsync file bc git rsync bc findutils
           sudo update-alternatives --config java
           sudo update-alternatives --config javac
           echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
@@ -54,13 +89,12 @@ jobs:
       - name: Install Python Dependencies
         run: |
           pip3 install -r requirements.txt
-          pip3 install --upgrade build
 
       # Install (n)Migen / LiteX / Cores
       - name: Install LiteX
         run: |
           wget https://raw.githubusercontent.com/enjoy-digital/litex/master/litex_setup.py
-          python3 litex_setup.py init install --user
+          python3 litex_setup.py --init --install --user
 
       # Install RISC-V GCC
       - name: Install RISC-V GCC
@@ -70,12 +104,15 @@ jobs:
           sudo mkdir /usr/local/riscv
           sudo cp -r $PWD/riscv64-*/* /usr/local/riscv
 
-      # Build CT-Key Package
-      - name: Build ctkey package
+      # Get and install CT-Key Package
+      - name: Download and install ctkey package
+        uses: actions/download-artifact@v4
+        with:
+          name: ctkey-package
+
+      - name: Install ctkey package
         run: |
-          cd ${{ github.workspace }}/ctkey_package 
-          python3 -m build
-          pip install dist/*.whl
+          pip install ${{ github.workspace }}/ctkey_package/dist/*.whl
 
       # Install Yosys
       - name: Install Yosys
@@ -99,11 +136,6 @@ jobs:
           ref: 2024.02.x
           path: ${{ github.workspace }}/buildroot
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y sed make binutils build-essential gcc g++ diffutils bash patch gzip bzip2 perl tar cpio unzip rsync file bc wget git rsync bc findutils
-
       - name: Build linux
         run: |
           cd ${{ github.workspace }}/buildroot
@@ -118,8 +150,6 @@ jobs:
           path: |
             ${{ github.workspace }}/linux-on-litex-vexriscv/images
             ${{ github.workspace }}/linux-on-litex-vexriscv/build
-            ${{ github.workspace }}/soc_package/dist/*.whl
-            ${{ github.workspace }}/core_package/dist/*.whl
           if-no-files-found: error
 
 
