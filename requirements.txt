@@ -1,0 +1,4 @@
+sphinx==7.2.6
+meson
+sphinxcontrib-wavedrom==2.1.1
+ninja

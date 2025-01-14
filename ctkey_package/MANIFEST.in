@@ -1,0 +1,3 @@
+prune src/ctkey/cores/aes/src/model
+graft src/ctkey/cores/aes/src/rtl
+graft src/ctkey/cores/timer

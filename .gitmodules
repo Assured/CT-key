@@ -1,3 +1,6 @@
+[submodule "linux-on-litex-vexriscv"]
+	path = linux-on-litex-vexriscv
+	url = https://github.com/Assured/linux-on-litex-vexriscv.git
 [submodule "aes"]
-	path = cores/aes
+	path = ctkey_package/src/ctkey/cores/aes
 	url = https://github.com/secworks/aes.git
