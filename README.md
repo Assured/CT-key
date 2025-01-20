@@ -99,7 +99,7 @@ If you need to change any persistent settings in buildroot these need to be adde
 
 **Linux-on-litex-vexriscv files**
 
-- linux-on-litex-vexriscv/boards.py - A file that contains all supported boards. New boards can be added but they need target SoC. See [ctkey_package/src/ctkey/targets] for examples on custom SoC based on existing.
+- linux-on-litex-vexriscv/boards.py - A file that contains all supported boards. New boards can be added but they need target SoC. See [targets](ctkey_package/src/ctkey/targets) for examples on custom SoC based on existing.
 - linux-on-litex-vexriscv/make.py - When adding custom boards or new, some changes may need to be done here.
 
 **Python requirements**
