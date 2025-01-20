@@ -68,7 +68,7 @@ This is how to build linux. The distrobution used is buildroot LTS version 2024.
 
 (Default config "ctkey_defconfig" is under development which is targeted to generate a persistent version on sdcard, right now as ramdisk)
 
-1. cd to <rootdev>/CT-key
+1. cd to rootdev/CT-key
 2. git clone --checkout 2024.02.10 https://github.com/buildroot/buildroot
 3. cd buildroot
 4. make BR2_EXTERNAL=../linux-on-litex-vexricv/buildroot ctkey_defconfig
@@ -79,8 +79,8 @@ This is how to build linux. The distrobution used is buildroot LTS version 2024.
 This describes loading software from SD-card for Litex. Litex has various of other ways of loading software like serialboot, flashboot, romboot and ethernet boot. Read [this](https://github.com/enjoy-digital/litex/wiki/Load-Application-Code-To-CPU) documentation for further information.
 
 1. Take an µSD-card and format as VFAT.
-2. cd to <rootdev>/linux-on-litex-vexriscv/images
-3. cp -L ./* <root of sdcard>/
+2. cd to rootdev/linux-on-litex-vexriscv/images
+3. cp -L ./* sdcard/
 4. Put sdcard in device and start
 
 ## Important files
@@ -89,11 +89,11 @@ This describes loading software from SD-card for Litex. Litex has various of oth
 
 - linux-on-litex-vexriscv/buildroot - Top folder and contains all configuration on how buildroot should be built.
 - linux-on-litex-vexriscv/buildroot/configs - Contains defconfigs for buildroot
-- linux-on-litex-vexriscv/buildroot/board/<defconfig_name> - This folder contains board configuration for the defconfig used.
-- linux-on-litex-vexriscv/buildroot/board/<defconfig_name>/rootfs_overlay/<path> - Path need to be a path on a linux system. It's an overlay for the rootfs with files to include in rootfs when generating image.
-- linux-on-litex-vexriscv/buildroot/board/<defconfig_name>/genimage.cfg - Genimage config on how buildroot should generate an image after compilation.
-- linux-on-litex-vexriscv/buildroot/board/<defconfig_name>/post-image.sh - Script that runs the genimage process.
-- linux-on-litex-vexriscv/buildroot/board/<defconfig_name>/linux.config - How buildroot should configure linux
+- linux-on-litex-vexriscv/buildroot/board/\<defconfig_name\> - This folder contains board configuration for the defconfig used.
+- linux-on-litex-vexriscv/buildroot/board/\<defconfig_name\>/rootfs_overlay/\<path\> - Path need to be a path on a linux system. It's an overlay for the rootfs with files to include in rootfs when generating image.
+- linux-on-litex-vexriscv/buildroot/board/\<defconfig_name\>/genimage.cfg - Genimage config on how buildroot should generate an image after compilation.
+- linux-on-litex-vexriscv/buildroot/board/\<defconfig_name\>/post-image.sh - Script that runs the genimage process.
+- linux-on-litex-vexriscv/buildroot/board/\<defconfig_name\>/linux.config - How buildroot should configure linux
 
 If you need to change any persistent settings in buildroot these need to be added here.
 
