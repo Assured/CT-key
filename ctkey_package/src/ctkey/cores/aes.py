@@ -2,10 +2,8 @@ from migen import *
 from litex.soc.interconnect.csr import *
 from litex.soc.integration.doc import AutoDoc, ModuleDoc
 
-import os.path
-
 class aes(Module, AutoCSR, AutoDoc):
-    def __init__(self, platform):
+    def __init__(self):
         self.intro = ModuleDoc("""
         AES Core
         
@@ -52,8 +50,6 @@ class aes(Module, AutoCSR, AutoDoc):
         CORE_VERSION - 0x302e3630: Core version ("0.60")
         """)
         
-        self.platform = platform
-        
         # CSR
         self.write_reg = CSRStorage(32, name="WRITE_REG", description="Write register")
         self.read_reg = CSRStatus(32, name="READ_REG", description="Read register")
@@ -88,5 +84,3 @@ class aes(Module, AutoCSR, AutoDoc):
             i_write_data=write_data,
             o_read_data=read_data
         )
-        
-        self.platform.add_source_dir(os.path.join(os.path.dirname(__file__), "aes/src/rtl"))

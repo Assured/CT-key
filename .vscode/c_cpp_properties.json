@@ -1,0 +1,60 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/isaac/CT-Key-Project/CT-key/**",
+                "/usr/src/linux-headers-6.8.0-51-generic/include/**",
+                "/usr/src/linux-hwe-6.8-headers-6.8.0-51/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "compilerPathInCppPropertiesJson": "/usr/bin/gcc",
+            "mergeConfigurations": false,
+            "browse": {
+                "path": [
+                    "/home/isaac/CT-Key-Project/CT-key/**",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Modules",
+            "includePath": [
+                "/home/isaac/CT-Key-Project/CT-key/**",
+                "/usr/src/linux-headers-6.8.0-51-generic/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/local/ricv",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPathInCppPropertiesJson": "/usr/bin/gcc",
+            "mergeConfigurations": false,
+            "browse": {
+                "path": [
+                    "/home/isaac/CT-Key-Project/CT-key/**",
+                    "/usr/src/linux-headers-6.8.0-51-generic/include/**",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "riscv",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/../buildroot-2024.02.10/output/host/lib/gcc/riscv32-buildroot-linux-gnu/13.3.0/plugin/include",
+            ],
+            "defines": [],
+            "compilerPath": "${workspaceFolder}/../buildroot-2024.02.10/output/host/bin/riscv32-linux-",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "gcc-x86"
+        }
+    ],
+    "version": 4
+}

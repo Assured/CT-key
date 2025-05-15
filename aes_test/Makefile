@@ -1,35 +1,23 @@
-# Define the cross-compiler prefix
-CROSS_COMPILE = riscv64-unknown-linux-gnu-
-SYSROOT = /opt/riscv/sysroot
+PLATFORM_BUILD_DIR = ./build/gsd_orangecrab
+SOC_DIR = ../../litex/litex/litex/soc
+
+include $(PLATFORM_BUILD_DIR)/software/include/generated/variables.mak
+include $(SOC_DIR)/software/common.mak
+
 BUILD_DIR = $(CURDIR)/build
 DEBUG_DIR = $(BUILD_DIR)/debug
 RELEASE_DIR = $(BUILD_DIR)/release
 
-# Define the compiler and other tools
-CC = $(CROSS_COMPILE)gcc -march=rv32ima -mabi=ilp32 -static
-LD = $(CROSS_COMPILE)ld
-OBJCOPY = $(CROSS_COMPILE)objcopy
-OBJDUMP = $(CROSS_COMPILE)objdump
-
 # Define the source files and the target executable
-SRCS = main.c src/aes.c
-OBJS = $(patsubst %.c,$(OUTPUT_DIR)/%.o,$(SRCS))
-TARGET = aes_test
-
-# External include directories
-INCLUDES = -I$(SYSROOT)/usr/include -I../linux-on-litex-vexriscv/build/orange_crab_ctkey/software/include -Iinclude -I../../litex/litex/litex/soc/software/include -I../../litex/litex/litex/soc/cores/cpu/vexriscv 
-
-# External library directories and libraries
-LIBDIRS = -L$(SYSROOT)/usr/lib
-LIBS = -l../linux-on-litex-vexriscv/build/orange_crab_ctkey/software/libc/libc.a
+SRCS = main.c src/aes.c 
+OBJECTS = $(patsubst %.c,$(OUTPUT_DIR)/%.o,$(SRCS))
+OBJECTS += $(PLATFORM_BUILD_DIR)/software/bios/crt0.o
+TARGET = firmware.bin
+INCLUDES += -I./include
 
 # Compiler flags
-CFLAGS = -Wall $(INCLUDES)
 RELEASE_CFLAGS = -Os
 DEBUG_CFLAGS = -g -O0
-
-# Linker flags
-LDFLAGS = -L../linux-on-litex-vexriscv/build/orange_crab_ctkey/software
 
 # Determine output directory based on build type
 ifeq ($(DEBUG), 1)
@@ -43,13 +31,38 @@ endif
 # Default target
 all: $(OUTPUT_DIR)/$(TARGET)
 
+$(OUTPUT_DIR)/%.bin: $(OUTPUT_DIR)/%.elf
+	$(OBJCOPY) -O binary $< $@
+	chmod -x $@
+
+vpath %.a $(PACKAGES:%=$(PLATFORM_BUILD_DIR)/software/%)
+
+$(OUTPUT_DIR)/firmware.elf: $(OBJECTS)
+	$(CC) $(LDFLAGS) -T linker.ld -N -o $@ \
+		$(OBJECTS) \
+		$(PACKAGES:%=-L$(PLATFORM_BUILD_DIR)/software/%) \
+		-Wl,--whole-archive \
+		-Wl,--gc-sections \
+		-Wl,-Map,$@.map \
+		$(LIBS:lib%=-l%)
+	chmod -x $@
+
+-include $(OBJECTS:.o=.d)
+
+VPATH = $(BIOS_DIRECTORY):$(BIOS_DIRECTORY)/cmds:$(CPU_DIRECTORY)
+
+main.o: main.c
+	$(compile)
+
+%.o: %.c
+	$(compile)
+
+%.o: %.S
+	$(assemble)
+
 # Debug target
 debug:
 	$(MAKE) DEBUG=1
-
-# Link the target executable
-$(OUTPUT_DIR)/$(TARGET): $(OBJS) | $(OUTPUT_DIR)
-	$(CC) $(LDFLAGS) -o $@ $^
 
 # Compile source files to object files
 $(OUTPUT_DIR)/%.o: %.c | $(OUTPUT_DIR)
@@ -60,6 +73,7 @@ $(OUTPUT_DIR):
 
 # Clean up build artifacts
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)/release
+	rm -rf $(BUILD_DIR)/debug
 
 .PHONY: all debug clean
