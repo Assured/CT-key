@@ -207,7 +207,7 @@ class BaseSoC(SoCCore):
 def main():
     from litex.build.parser import LiteXArgumentParser
     parser = LiteXArgumentParser(platform=gsd_orangecrab.Platform, description="LiteX SoC on OrangeCrab.")
-    parser.add_target_argument("--sys-clk-freq",    default=64e6, type=float, help="System clock frequency.")
+    parser.add_target_argument("--sys-clk-freq",    default=48e6, type=float, help="System clock frequency.")
     parser.add_target_argument("--revision",        default="0.2",            help="Board Revision (0.1 or 0.2).")
     parser.add_target_argument("--device",          default="85F",            help="ECP5 device (25F, 45F or 85F).")
     parser.add_target_argument("--sdram-device",    default="MT41K64M16",     help="SDRAM device (MT41K64M16, MT41K128M16, MT41K256M16 or MT41K512M16).")

@@ -56,8 +56,8 @@ const uint32_t nist_aes256_key2[8] = {
 const uint32_t nist_plaintext0[4] = {
     0x6bc1bee2,
     0x2e409f96,
-    0x93d7e117,
-    0x393172a0
+    0xe93d7e11,
+    0x7393172a
 };
 
 const uint32_t nist_plaintext1[4] = {
@@ -168,12 +168,42 @@ int main(void)
     uart_init();
 
     char buf[13];
+    
+    dump_state();
     aes_reset();
+    dump_state();
+
     aes_getinfo(buf);
 
-    printf("AES core name: %s\n", buf);
+    printf("AES core name: %s\n\n", buf);
 
-	ecb_mode_single_block_test(1, AES_CIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_plaintext0, nist_ecb_128_enc_expected0);
+    // Test with AES-128 key
+	ecb_mode_single_block_test(0x01, AES_ENCIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_plaintext0, nist_ecb_128_enc_expected0);
+    ecb_mode_single_block_test(0x02, AES_ENCIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_plaintext1, nist_ecb_128_enc_expected1);
+    ecb_mode_single_block_test(0x03, AES_ENCIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_plaintext2, nist_ecb_128_enc_expected2);
+    ecb_mode_single_block_test(0x04, AES_ENCIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_plaintext3, nist_ecb_128_enc_expected3);
+    
+    ecb_mode_single_block_test(0x05, AES_DECIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_ecb_128_enc_expected0, nist_plaintext0);
+    ecb_mode_single_block_test(0x06, AES_DECIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_ecb_128_enc_expected1, nist_plaintext1);
+    ecb_mode_single_block_test(0x07, AES_DECIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_ecb_128_enc_expected2, nist_plaintext2);
+    ecb_mode_single_block_test(0x08, AES_DECIPHER, nist_aes128_key1, AES_KEY_SIZE_128, nist_ecb_128_enc_expected3, nist_plaintext3);
+    
+    ecb_mode_single_block_test(0x09, AES_ENCIPHER, nist_aes128_key2, AES_KEY_SIZE_128, nist_plaintext4, nist_ecb_128_enc_expected4);
+    ecb_mode_single_block_test(0x0A, AES_DECIPHER, nist_aes128_key2, AES_KEY_SIZE_128, nist_ecb_128_enc_expected4, nist_plaintext4);
+    
+    // Test with AES-256 key
+    ecb_mode_single_block_test(0x10, AES_ENCIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_plaintext0, nist_ecb_256_enc_expected0);
+    ecb_mode_single_block_test(0x11, AES_ENCIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_plaintext1, nist_ecb_256_enc_expected1);
+    ecb_mode_single_block_test(0x12, AES_ENCIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_plaintext2, nist_ecb_256_enc_expected2);
+    ecb_mode_single_block_test(0x13, AES_ENCIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_plaintext3, nist_ecb_256_enc_expected3);
+    
+    ecb_mode_single_block_test(0x14, AES_DECIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_ecb_256_enc_expected0, nist_plaintext0);
+    ecb_mode_single_block_test(0x15, AES_DECIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_ecb_256_enc_expected1, nist_plaintext1);
+    ecb_mode_single_block_test(0x16, AES_DECIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_ecb_256_enc_expected2, nist_plaintext2);
+    ecb_mode_single_block_test(0x17, AES_DECIPHER, nist_aes256_key1, AES_KEY_SIZE_256, nist_ecb_256_enc_expected3, nist_plaintext3);
+    
+    ecb_mode_single_block_test(0x18, AES_ENCIPHER, nist_aes256_key2, AES_KEY_SIZE_256, nist_plaintext4, nist_ecb_256_enc_expected4);
+    ecb_mode_single_block_test(0x19, AES_DECIPHER, nist_aes256_key2, AES_KEY_SIZE_256, nist_ecb_256_enc_expected4, nist_plaintext4);
 
     return 0;
 }
