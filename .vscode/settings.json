@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "csr.h": "c",
+        "platform_device.h": "c",
+        "litex.h": "c",
+        "soc.h": "c"
+    }
+}
