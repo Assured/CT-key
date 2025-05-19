@@ -47,7 +47,7 @@ jobs:
           name: ctkey-package
           path: ${{ github.workspace }}/ctkey_package/dist/*.whl
   
-  build:
+  build-soc:
     runs-on: ubuntu-22.04
     needs: build-ctkey-python
     steps:
@@ -124,23 +124,30 @@ jobs:
       # Build SoC
       - name: Build SoC
         run: |
-          cd ${{ github.workspace }}/linux-on-litex-vexriscv
+          cd ${{ github.workspace }}/aes_test
           export PATH=${{ github.workspace }}/oss-cad-suite/bin:/usr/local/riscv/bin:$HOME/.local/bin:$PATH
-          python3 make.py --board orange_crab_ctkey --device 85F --doc --build
+          python3 ./soc.py --cpu-type vexriscv --with-spi-sdcard --build --doc
+
+      # Build firmware
+      - name: Build firmware
+        run: |
+          cd ${{ github.workspace }}/aes_test
+          export PATH=${{ github.workspace }}/oss-cad-suite/bin:/usr/local/riscv/bin:$HOME/.local/bin:$PATH
+          make
 
       # Build linux
-      - name: Checkout Buildroot 2024.02.10
-        uses: actions/checkout@v4
-        with:
-          repository: buildroot/buildroot
-          ref: 2024.02.10
-          path: ${{ github.workspace }}/buildroot
+      #- name: Checkout Buildroot 2024.02.10
+      #  uses: actions/checkout@v4
+      #  with:
+      #     repository: buildroot/buildroot
+      #     ref: 2024.02.10
+      #     path: ${{ github.workspace }}/buildroot
 
-      - name: Build linux
-        run: |
-          cd ${{ github.workspace }}/buildroot
-          make BR2_EXTERNAL=../linux-on-litex-vexriscv/buildroot/ litex_vexriscv_defconfig
-          make
+      # - name: Build linux
+      #   run: |
+      #     cd ${{ github.workspace }}/buildroot
+      #     make BR2_EXTERNAL=../linux-on-litex-vexriscv/buildroot/ litex_vexriscv_defconfig
+      #     make
 
       # Store artifacts
       - name: Store artifacts
@@ -148,8 +155,8 @@ jobs:
         with:
           name: soc-build
           path: |
-            ${{ github.workspace }}/linux-on-litex-vexriscv/images
-            ${{ github.workspace }}/linux-on-litex-vexriscv/build
+            ${{ github.workspace }}/aes_test/build/release/firmware.bin
+            ${{ github.workspace }}/aes_test/build/gsd_orangecrab
           if-no-files-found: error
 
 
