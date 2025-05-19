@@ -199,8 +199,7 @@ class BaseSoC(SoCCore):
                 sys_clk_freq = sys_clk_freq)
             
         # AES
-        self.aes = aes.aes()
-        self.platform.add_source_dir(os.path.join(os.path.dirname(aes.__file__), "aes/src/rtl"))
+        self.aes = aes.aes(self.platform)
 
 # Build --------------------------------------------------------------------------------------------
 

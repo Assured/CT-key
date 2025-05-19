@@ -1,9 +1,10 @@
+import os.path
 from migen import *
 from litex.soc.interconnect.csr import *
 from litex.soc.integration.doc import AutoDoc, ModuleDoc
 
 class aes(Module, AutoCSR, AutoDoc):
-    def __init__(self):
+    def __init__(self, platform):
         self.intro = ModuleDoc("""
         AES Core
         
@@ -71,3 +72,5 @@ class aes(Module, AutoCSR, AutoDoc):
             i_write_data=self.write_reg.storage,
             o_read_data=self.read_reg.status,
         )
+        
+        platform.add_source_dir(os.path.join(os.path.dirname(__file__), "aes/src/rtl"))
