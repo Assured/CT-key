@@ -4,7 +4,7 @@ from litex.soc.interconnect.csr import *
 from litex.soc.integration.doc import AutoDoc, ModuleDoc
 
 class aes(Module, AutoCSR, AutoDoc):
-    def __init__(self, platform):
+    def __init__(self):
         self.intro = ModuleDoc("""
         AES Core
         

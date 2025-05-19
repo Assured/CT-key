@@ -61,6 +61,7 @@
 #define AES_DECIPHER 0
 #define AES_ENCIPHER 1
 
+
 // Timer defines
 #define US_TO_TICKS(x) ((x) * (CONFIG_CLOCK_FREQUENCY / 1000000))
 
