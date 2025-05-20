@@ -47,7 +47,7 @@ jobs:
           name: ctkey-package
           path: ${{ github.workspace }}/ctkey_package/dist/*.whl
   
-  build:
+  build-soc:
     runs-on: ubuntu-22.04
     needs: build-ctkey-python
     steps:
@@ -124,23 +124,9 @@ jobs:
       # Build SoC
       - name: Build SoC
         run: |
-          cd ${{ github.workspace }}/linux-on-litex-vexriscv
+          cd ${{ github.workspace }}/aes_test
           export PATH=${{ github.workspace }}/oss-cad-suite/bin:/usr/local/riscv/bin:$HOME/.local/bin:$PATH
-          python3 make.py --board orange_crab_ctkey --device 85F --doc --build
-
-      # Build linux
-      - name: Checkout Buildroot 2024.02.10
-        uses: actions/checkout@v4
-        with:
-          repository: buildroot/buildroot
-          ref: 2024.02.10
-          path: ${{ github.workspace }}/buildroot
-
-      - name: Build linux
-        run: |
-          cd ${{ github.workspace }}/buildroot
-          make BR2_EXTERNAL=../linux-on-litex-vexriscv/buildroot/ litex_vexriscv_defconfig
-          make
+          python3 ./soc.py --cpu-type vexriscv --with-spi-sdcard --build --doc
 
       # Store artifacts
       - name: Store artifacts
@@ -148,8 +134,79 @@ jobs:
         with:
           name: soc-build
           path: |
-            ${{ github.workspace }}/linux-on-litex-vexriscv/images
-            ${{ github.workspace }}/linux-on-litex-vexriscv/build
+            ${{ github.workspace }}/aes_test/build/gsd_orangecrab
           if-no-files-found: error
+        
+  # Build firmware
+  build-firmware:
+    runs-on: ubuntu-22.04
+    needs: build-soc
+    steps:
+      # Checkout Repository
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
 
+      # Install Tools
+      - name: Install Tools
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential make
 
+      # Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      # Install Python Dependencies
+      - name: Install Python Dependencies
+        run: |
+          pip3 install -r requirements.txt
+
+      # Get and install CT-Key Package
+      - name: Download and install ctkey package
+        uses: actions/download-artifact@v4
+        with:
+          name: ctkey-package
+
+      - name: Install ctkey package
+        run: |
+          pip install ctkey-1.0.0-py3-none-any.whl
+
+      # Get SoC build artifacts
+      - name: Download SoC build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: soc-build
+
+      # Install RICV GCC
+      - name: Install RISC-V GCC
+        run: |
+          wget https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+          tar -xf $PWD/riscv64-*.tar.gz
+          sudo mkdir /usr/local/riscv
+          sudo cp -r $PWD/riscv64-*/* /usr/local/riscv
+
+      # Install (n)Migen / LiteX / Cores
+      - name: Install LiteX
+        run: |
+          wget https://raw.githubusercontent.com/enjoy-digital/litex/master/litex_setup.py
+          python3 litex_setup.py --init --install --user
+
+      - name: Build firmware
+        run: |
+          cd ${{ github.workspace }}/aes_test
+          export PATH=${{ github.workspace }}/oss-cad-suite/bin:/usr/local/riscv/bin:$HOME/.local/bin:$PATH
+          make SOC_DIR=${{ github.workspace }}/CT-Key/litex/litex/soc PLATFORM_BUILD_DIR=${{ github.workspace }}/gsd_orangecrab
+
+      # Store artifacts
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: soc-build
+          path: |
+            ${{ github.workspace }}/aes_test/build/release/firmware.bin
+          if-no-files-found: error

@@ -1,9 +1,9 @@
 #include "aes.h"
 
-static void sleep(uint32_t ms)
+static void sleep(uint32_t ticks)
 {
     timer0_en_write(0);
-    timer0_load_write(ms);
+    timer0_load_write(ticks);
     timer0_update_value_write(1);
     timer0_en_write(1);
     while(timer0_value_read() != 0)
@@ -25,18 +25,8 @@ static uint32_t read_word(uint8_t addr)
 
     data = aes_output_read();
 
-    #ifdef DEBUG
-        reg = aes_ctrl_read();
-        printf("[DEBUG][R]: addr = %02lx, rst = %01lx, cs = %01lx, we = %01lx, data = %08lx\n", (reg >> CSR_AES_CTRL_ADDR_OFFSET), reg & (1 << CSR_AES_CTRL_RST_OFFSET), reg & (1 << CSR_AES_CTRL_CS_OFFSET), reg & (1 << CSR_AES_CTRL_WE_OFFSET), data);
-    #endif
-
     reg ^= (1 << CSR_AES_CTRL_CS_OFFSET);
     aes_ctrl_write(reg);
-
-    #ifdef DEBUG
-        reg = aes_ctrl_read();
-        printf("[DEBUG][R]: addr = %02lx, rst = %01lx, cs = %01lx, we = %01lx\n", (reg >> CSR_AES_CTRL_ADDR_OFFSET), reg & (1 << CSR_AES_CTRL_RST_OFFSET), reg & (1 << CSR_AES_CTRL_CS_OFFSET), reg & (1 << CSR_AES_CTRL_WE_OFFSET));
-    #endif
 
     return data;
 }
@@ -50,15 +40,6 @@ static void write_word(uint8_t addr, const uint32_t data)
     aes_input_write(data);
     aes_ctrl_write(reg);
 
-    #ifdef DEBUG
-        reg = aes_ctrl_read();
-        printf("[DEBUG][W]: addr = %02lx, rst = %01lx, cs = %01lx, we = %01lx, data = %08lx, ", (reg >> CSR_AES_CTRL_ADDR_OFFSET), reg & (1 << CSR_AES_CTRL_RST_OFFSET), reg & (1 << CSR_AES_CTRL_CS_OFFSET), reg & (1 << CSR_AES_CTRL_WE_OFFSET), data);
-        reg = aes_input_read();
-        printf("input = %08lx\n", reg);
-
-        reg = aes_ctrl_read();
-    #endif
-
     reg ^= (1 << CSR_AES_CTRL_CS_OFFSET) | (1 << CSR_AES_CTRL_WE_OFFSET);
     aes_ctrl_write(reg);
 }
@@ -71,27 +52,11 @@ static void write_block(const uint32_t data[4])
     }
 }
 
-static void read_block(uint32_t block[4])
-{
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        block[i] = read_word(ADDR_BLOCK0 + i);
-    }
-}
-
 static void write_key(const uint32_t data[8])
 {
     for(uint8_t i = 0; i < 8; i++)
     {
         write_word(ADDR_KEY0 + i, data[i]);
-    }
-}
-
-static void read_key(uint32_t key[8])
-{
-    for (uint8_t i = 0; i < 8; i++)
-    {
-        key[i] = read_word(ADDR_KEY0 + i);
     }
 }
 
@@ -107,39 +72,15 @@ void aes_reset(void)
 {
     uint32_t reg = 0;
 
-    #ifdef DEBUG
-        reg = read_word(ADDR_STATUS);
-        printf("[DEBUG][R]: ready = %01lx\n", reg & (1 << STATUS_READY_BIT));
-
-        reg = 0;
-    #endif
-
     printf("Resetting AES\n");
     aes_ctrl_write(reg);
-
-    #ifdef DEBUG
-        reg = aes_ctrl_read();
-        printf("[DEBUG][R]: addr = %02lx, rst = %01lx, cs = %01lx, we = %01lx\n", (reg >> CSR_AES_CTRL_ADDR_OFFSET), reg & (1 << CSR_AES_CTRL_RST_OFFSET), reg & (1 << CSR_AES_CTRL_CS_OFFSET), reg & (1 << CSR_AES_CTRL_WE_OFFSET));
-        reg = read_word(ADDR_STATUS);
-        printf("[DEBUG][R]: ready = %01lx\n", reg & (1 << STATUS_READY_BIT));
-
-        reg = 0;
-    #endif
 
     reg |= (1 << CSR_AES_CTRL_RST_OFFSET);
     aes_ctrl_write(reg);
 
-    #ifdef DEBUG
-        reg = aes_ctrl_read();
-        printf("[DEBUG][R]: addr = %02lx, rst = %01lx, cs = %01lx, we = %01lx\n", (reg >> CSR_AES_CTRL_ADDR_OFFSET), reg & (1 << CSR_AES_CTRL_RST_OFFSET), reg & (1 << CSR_AES_CTRL_CS_OFFSET), reg & (1 << CSR_AES_CTRL_WE_OFFSET));
-        reg = read_word(ADDR_STATUS);
-        printf("[DEBUG][R]: ready = %01lx\n", reg & (1 << STATUS_READY_BIT));
-
-        reg = 0;
-    #endif
-
-    printf("Waiting for AES to reset\n");
     while(! aes_ready()){}
+    
+    printf("AES reset completed\n");
 } 
 
 void aes_getinfo(char * buf)
@@ -166,10 +107,7 @@ bool aes_ready(void)
     bool status = 0;
 
     if(read_word(ADDR_STATUS) & (1 << STATUS_READY_BIT)) {
-        printf("AES is ready\n");
         status = 1;
-    } else {
-        printf("AES is not ready\n");
     }
 
     return status;
@@ -181,31 +119,47 @@ void aes_init_key(const uint32_t key[8], uint8_t key_size)
 
     write_key(key);
 
+    // Set the key size in the configuration register
     if(key_size) {
         write_word(ADDR_CONFIG, (uint8_t) 0x02);
     } else {
         write_word(ADDR_CONFIG, (uint8_t) 0x00);
     }
     
+    // Set the control register to initialize the key
     write_word(ADDR_CTRL, (uint8_t) 0x01);
+
+    // Wait for the AES operation to complete
+    while(! aes_ready()) {
+        sleep(US_TO_TICKS(1));
+    }
+
+    printf("AES key initialization completed\n");
 }
 
 void dump_state(void)
 {
     uint32_t ctrl = read_word(ADDR_CTRL);
+    uint32_t status = read_word(ADDR_STATUS);
 
     printf("AES state:\n");
-    printf("Control Register: init = %01lx, next = %01lx\n", ctrl & (1 << CTRL_INIT_BIT), ctrl & (1 << CTRL_NEXT_BIT));
-    printf("Configuration Register: encdec = %01lx, length = %01lx\n", ctrl & (1 << CTRL_ENCDEC_BIT), ctrl & (1 << CTRL_KEYLEN_BIT));
-    printf("Status Register: ready = %01lx\n", read_word(ADDR_STATUS) & (1 << STATUS_READY_BIT));
-    
-    uint32_t block[4];
-    uint32_t key[8];
-    read_block(block);
-    read_key(key);
-    printf("Block: %08lx%08lx%08lx%08lx\n", block[0], block[1], block[2], block[3]);
-    printf("Key: %08lx%08lx%08lx%08lx%08lx%08lx%08lx%08lx\n\n", 
-           key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7]);
+    printf("Control Register: init = %01lx, next = %01lx\n", (ctrl >> CTRL_INIT_BIT) & 1, (ctrl >> CTRL_NEXT_BIT) & 1);
+    printf("Configuration Register: encdec = %01lx, length = %01lx\n", (ctrl >> CTRL_ENCDEC_BIT) & 1, (ctrl >> CTRL_KEYLEN_BIT) & 1);
+    printf("Status Register: valid = %01lx, ready = %01lx\n", (status >> STATUS_VALID_BIT) & 1, (status >> STATUS_READY_BIT) & 1);
+}
+
+void aes_start_operation(uint8_t encdec, uint8_t key_len) {
+    printf("Starting AES operation\n");
+
+    write_word(ADDR_CONFIG, (uint8_t) (0x00 + (key_len << 1) + encdec));
+    write_word(ADDR_CTRL, (uint8_t) 0x02);
+
+    // Wait for the AES operation to complete
+    while(! aes_ready()) {
+        sleep(US_TO_TICKS(1));
+    }
+
+    printf("AES operation completed\n");
 }
 
 bool ecb_mode_single_block_test(uint8_t tc_number, uint8_t encdec, const uint32_t key[8], uint8_t key_len, const uint32_t plaintext[4], const uint32_t expected[4])
@@ -216,11 +170,10 @@ bool ecb_mode_single_block_test(uint8_t tc_number, uint8_t encdec, const uint32_
     write_block(plaintext);
     dump_state();
 
-    write_word(ADDR_CONFIG, (uint8_t) (0x00 + (key_len << 1) + encdec));
-    write_word(ADDR_CTRL, (uint8_t) 0x02);
+    aes_start_operation(encdec, key_len);
+    dump_state();
 
-    sleep(500); // Wait for the AES operation to complete
-
+    // Read the result
     uint32_t result[4];
     read_result(result);
 

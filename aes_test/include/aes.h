@@ -26,7 +26,7 @@
 // Status register and its bit positions
 #define ADDR_STATUS 0x09 // Address for the status register
 #define STATUS_READY_BIT 0 // Bit position indicating if the core is ready
-//#define STATUS_VALID_BIT 1 // Bit position indicating if the output is valid
+#define STATUS_VALID_BIT 1 // Bit position indicating if the output is valid
 
 // Configuration register and its bit positions
 #define ADDR_CONFIG 0x0a // Address for the configuration register
@@ -61,6 +61,10 @@
 #define AES_DECIPHER 0
 #define AES_ENCIPHER 1
 
+
+// Timer defines
+#define US_TO_TICKS(x) ((x) * (CONFIG_CLOCK_FREQUENCY / 1000000))
+
 // Function prototypes
 void aes_init_key(const uint32_t key[8], uint8_t key_size);
 void aes_reset(void);
@@ -68,6 +72,7 @@ void aes_getinfo(char * buf);
 bool aes_ready(void);
 bool ecb_mode_single_block_test(uint8_t tc_number, uint8_t encdec, const uint32_t key[8], uint8_t key_len, const uint32_t plaintext[4], const uint32_t expected[4]);
 void dump_state(void);
+void aes_start_operation(uint8_t encdec, uint8_t key_len);
 #endif
 
 
